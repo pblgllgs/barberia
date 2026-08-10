@@ -32,6 +32,14 @@ La app funciona en **modo demo** sin Supabase (usa `src/lib/seed.ts` + datos en 
 desarrollar y previsualizar de inmediato. Cuando existan `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en `.env`,
 la capa de datos (`src/lib/api.ts`) conmuta automáticamente a Supabase.
 
+## Deploy (Cloudflare Pages)
+
+- Frontend estático en **Cloudflare Pages** (free tier, builds ilimitados).
+- Deploy **solo manual**: GitHub Actions `deploy-cloudflare.yml` (dispara con *Run workflow* en la pestaña Actions).
+- Secrets requeridos en el repo: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
+- Local: `npx wrangler pages project create barberia --production-branch=master` (primera vez) y `npx wrangler pages deploy dist --project-name=barberia`.
+- SPA routing vía `public/_redirects`.
+
 ## Supabase (hosted)
 
 - Proyecto cloud: **barberia** — ref `cvgcaeyzghqnbaecnwtj` (región sa-east-1, free tier).
