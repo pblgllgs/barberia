@@ -4,6 +4,8 @@ import Button from '@/components/ui/Button'
 import { Field, Input, Select } from '@/components/ui/Field'
 import { EmptyState, Spinner } from '@/components/ui/Feedback'
 import Modal from '@/components/ui/Modal'
+import Pagination from '@/components/ui/Pagination'
+import { usePagination } from '@/lib/usePagination'
 import { getBarbers, getSchedules, saveSchedule, deleteSchedule } from '@/lib/api'
 import type { Barber, Schedule } from '@/lib/types'
 import { DAY_NAMES } from '@/lib/utils'
@@ -36,6 +38,8 @@ export default function Horarios() {
     const sorted = [...rows].sort((a, b) => a.barber_id.localeCompare(b.barber_id) || a.day_of_week - b.day_of_week)
     return barberFilter === 'all' ? sorted : sorted.filter((s) => s.barber_id === barberFilter)
   }, [rows, barberFilter])
+
+  const { page, setPage, paged } = usePagination(shown, 10)
 
   async function toggle(s: Schedule) {
     const next = { ...s, is_active: !s.is_active }
@@ -79,43 +83,46 @@ export default function Horarios() {
             <EmptyState title="Sin horarios" detail="Agrega ventanas horarias para tus barberos." />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[560px]">
-              <thead>
-                <tr>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Barbero</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Día</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Desde</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Hasta</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Estado</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {shown.map((s) => (
-                  <tr key={s.id} className="border-t border-line hover:bg-smoke">
-                    <td className="px-4.5 py-3.5 text-sm font-semibold">{barberName(s.barber_id)}</td>
-                    <td className="px-4.5 py-3.5 font-mono text-[12.5px] text-ash">{DAY_NAMES[s.day_of_week]}</td>
-                    <td className="px-4.5 py-3.5 font-mono text-[12.5px] text-brass">{s.start_time}</td>
-                    <td className="px-4.5 py-3.5 font-mono text-[12.5px] text-brass">{s.end_time}</td>
-                    <td className="px-4.5 py-3.5">
-                      <Badge tone={s.is_active ? 'success' : 'neutral'}>{s.is_active ? 'Activo' : 'Inactivo'}</Badge>
-                    </td>
-                    <td className="px-4.5 py-3.5">
-                      <div className="flex gap-2">
-                        <button className="btn-act" onClick={() => toggle(s)}>
-                          {s.is_active ? 'Desactivar' : 'Activar'}
-                        </button>
-                        <button className="btn-act danger" onClick={() => remove(s)}>
-                          Eliminar
-                        </button>
-                      </div>
-                    </td>
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[560px]">
+                <thead>
+                  <tr>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Barbero</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Día</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Desde</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Hasta</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Estado</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Acciones</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {paged.map((s) => (
+                    <tr key={s.id} className="border-t border-line hover:bg-smoke">
+                      <td className="px-4.5 py-3.5 text-sm font-semibold">{barberName(s.barber_id)}</td>
+                      <td className="px-4.5 py-3.5 font-mono text-[12.5px] text-ash">{DAY_NAMES[s.day_of_week]}</td>
+                      <td className="px-4.5 py-3.5 font-mono text-[12.5px] text-brass">{s.start_time}</td>
+                      <td className="px-4.5 py-3.5 font-mono text-[12.5px] text-brass">{s.end_time}</td>
+                      <td className="px-4.5 py-3.5">
+                        <Badge tone={s.is_active ? 'success' : 'neutral'}>{s.is_active ? 'Activo' : 'Inactivo'}</Badge>
+                      </td>
+                      <td className="px-4.5 py-3.5">
+                        <div className="flex gap-2">
+                          <button className="btn-act" onClick={() => toggle(s)}>
+                            {s.is_active ? 'Desactivar' : 'Activar'}
+                          </button>
+                          <button className="btn-act danger" onClick={() => remove(s)}>
+                            Eliminar
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination page={page} total={shown.length} pageSize={10} onPageChange={setPage} />
+          </>
         )}
       </div>
 

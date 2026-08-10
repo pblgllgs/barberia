@@ -4,6 +4,8 @@ import Button from '@/components/ui/Button'
 import { Field, Input, Select, Textarea } from '@/components/ui/Field'
 import { EmptyState, Spinner } from '@/components/ui/Feedback'
 import Modal from '@/components/ui/Modal'
+import Pagination from '@/components/ui/Pagination'
+import { usePagination } from '@/lib/usePagination'
 import { getServices, saveService } from '@/lib/api'
 import type { Service } from '@/lib/types'
 import { formatPrice } from '@/lib/utils'
@@ -24,6 +26,7 @@ export default function Servicios() {
   const [editing, setEditing] = useState<Service | null>(null)
   const [creating, setCreating] = useState(false)
   const [saving, setSaving] = useState(false)
+  const { page, setPage, paged } = usePagination(rows, 8)
 
   const reload = useCallback(() => {
     getServices().then(setRows).catch(() => {}).finally(() => setLoading(false))
@@ -59,36 +62,39 @@ export default function Servicios() {
             <EmptyState title="Sin servicios" detail="Crea tu primer servicio." />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px]">
-              <thead>
-                <tr>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Nombre</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Duración</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Precio</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Estado</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((s) => (
-                  <tr key={s.id} className="border-t border-line hover:bg-smoke">
-                    <td className="px-4.5 py-3.5 text-sm font-semibold">{s.name}</td>
-                    <td className="px-4.5 py-3.5 font-mono text-[12.5px] text-ash">{s.duration_min} min</td>
-                    <td className="px-4.5 py-3.5 font-mono text-[12.5px] text-brass">{formatPrice(s.price)}</td>
-                    <td className="px-4.5 py-3.5">
-                      <Badge tone={s.is_active ? 'success' : 'neutral'}>{s.is_active ? 'Activo' : 'Oculto'}</Badge>
-                    </td>
-                    <td className="px-4.5 py-3.5">
-                      <button className="btn-act" onClick={() => setEditing(s)}>
-                        Editar
-                      </button>
-                    </td>
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[640px]">
+                <thead>
+                  <tr>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Nombre</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Duración</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Precio</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Estado</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Acciones</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {paged.map((s) => (
+                    <tr key={s.id} className="border-t border-line hover:bg-smoke">
+                      <td className="px-4.5 py-3.5 text-sm font-semibold">{s.name}</td>
+                      <td className="px-4.5 py-3.5 font-mono text-[12.5px] text-ash">{s.duration_min} min</td>
+                      <td className="px-4.5 py-3.5 font-mono text-[12.5px] text-brass">{formatPrice(s.price)}</td>
+                      <td className="px-4.5 py-3.5">
+                        <Badge tone={s.is_active ? 'success' : 'neutral'}>{s.is_active ? 'Activo' : 'Oculto'}</Badge>
+                      </td>
+                      <td className="px-4.5 py-3.5">
+                        <button className="btn-act" onClick={() => setEditing(s)}>
+                          Editar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination page={page} total={rows.length} pageSize={8} onPageChange={setPage} />
+          </>
         )}
       </div>
 

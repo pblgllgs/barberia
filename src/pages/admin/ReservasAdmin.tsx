@@ -4,6 +4,8 @@ import Button from '@/components/ui/Button'
 import { Field, Input, Select } from '@/components/ui/Field'
 import { EmptyState, Spinner } from '@/components/ui/Feedback'
 import Modal from '@/components/ui/Modal'
+import Pagination from '@/components/ui/Pagination'
+import { usePagination } from '@/lib/usePagination'
 import { createBooking, deleteBooking, getBarbers, getBookings, getServices, updateBookingStatus } from '@/lib/api'
 import type { Booking, BookingStatus } from '@/lib/types'
 import { addDays, formatDateLong, formatPrice, statusLabels, todayStr } from '@/lib/utils'
@@ -43,6 +45,8 @@ export default function ReservasAdmin() {
     return filter === 'all' ? sorted : sorted.filter((b) => b.status === filter)
   }, [bookings, filter])
 
+  const { page, setPage, paged } = usePagination(shown, 10)
+
   const svcName = (id: string) => services.find((s) => s.id === id)?.name ?? '—'
   const brbName = (id: string) => barbers.find((b) => b.id === id)?.name ?? '—'
 
@@ -68,7 +72,10 @@ export default function ReservasAdmin() {
         {filters.map((f) => (
           <button
             key={f.key}
-            onClick={() => setFilter(f.key)}
+            onClick={() => {
+              setFilter(f.key)
+              setPage(1)
+            }}
             className={`rounded-md border px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] transition-colors ${
               filter === f.key ? 'border-brass bg-smoke text-brass' : 'border-line text-ash hover:text-ivory'
             }`}
@@ -88,11 +95,12 @@ export default function ReservasAdmin() {
             <EmptyState title="Sin reservas" detail="No hay reservas con este filtro." />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[820px]">
-              <thead>
-                <tr>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Fecha</th>
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[820px]">
+                <thead>
+                  <tr>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Fecha</th>
                   <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Cliente</th>
                   <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Servicio</th>
                   <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Barbero</th>
@@ -101,7 +109,7 @@ export default function ReservasAdmin() {
                 </tr>
               </thead>
               <tbody>
-                {shown.map((b) => (
+                {paged.map((b) => (
                   <tr key={b.id} className="border-t border-line hover:bg-smoke">
                     <td className="px-4.5 py-3.5">
                       <div className="font-mono text-[12.5px] text-ash">{formatDateLong(b.date)}</div>
@@ -141,7 +149,9 @@ export default function ReservasAdmin() {
                 ))}
               </tbody>
             </table>
-          </div>
+            </div>
+            <Pagination page={page} total={shown.length} pageSize={10} onPageChange={setPage} />
+          </>
         )}
       </div>
 

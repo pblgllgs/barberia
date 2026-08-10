@@ -4,6 +4,8 @@ import Button from '@/components/ui/Button'
 import { Field, Input, Select, Textarea } from '@/components/ui/Field'
 import { EmptyState, Spinner } from '@/components/ui/Feedback'
 import Modal from '@/components/ui/Modal'
+import Pagination from '@/components/ui/Pagination'
+import { usePagination } from '@/lib/usePagination'
 import { getBarbers, saveBarber } from '@/lib/api'
 import type { Barber } from '@/lib/types'
 
@@ -23,6 +25,7 @@ export default function Barberos() {
   const [editing, setEditing] = useState<Barber | null>(null)
   const [creating, setCreating] = useState(false)
   const [saving, setSaving] = useState(false)
+  const { page, setPage, paged } = usePagination(rows, 8)
 
   const reload = useCallback(() => {
     getBarbers().then(setRows).catch(() => {}).finally(() => setLoading(false))
@@ -58,41 +61,44 @@ export default function Barberos() {
             <EmptyState title="Sin barberos" detail="Agrega tu primer barbero." />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[680px]">
-              <thead>
-                <tr>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Nombre</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Rol</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Especialidad</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Estado</th>
-                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((b) => (
-                  <tr key={b.id} className="border-t border-line hover:bg-smoke">
-                    <td className="px-4.5 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <img src={b.image_url ?? ''} alt="" className="h-9 w-9 rounded-md border border-line object-cover" />
-                        <span className="text-sm font-semibold">{b.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-4.5 py-3.5 text-sm text-ash">{b.role ?? '—'}</td>
-                    <td className="px-4.5 py-3.5 text-sm text-ash">{b.specialty ?? '—'}</td>
-                    <td className="px-4.5 py-3.5">
-                      <Badge tone={b.is_active ? 'success' : 'neutral'}>{b.is_active ? 'Activo' : 'Oculto'}</Badge>
-                    </td>
-                    <td className="px-4.5 py-3.5">
-                      <button className="btn-act" onClick={() => setEditing(b)}>
-                        Editar
-                      </button>
-                    </td>
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[680px]">
+                <thead>
+                  <tr>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Nombre</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Rol</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Especialidad</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Estado</th>
+                    <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Acciones</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {paged.map((b) => (
+                    <tr key={b.id} className="border-t border-line hover:bg-smoke">
+                      <td className="px-4.5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <img src={b.image_url ?? ''} alt="" className="h-9 w-9 rounded-md border border-line object-cover" />
+                          <span className="text-sm font-semibold">{b.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-4.5 py-3.5 text-sm text-ash">{b.role ?? '—'}</td>
+                      <td className="px-4.5 py-3.5 text-sm text-ash">{b.specialty ?? '—'}</td>
+                      <td className="px-4.5 py-3.5">
+                        <Badge tone={b.is_active ? 'success' : 'neutral'}>{b.is_active ? 'Activo' : 'Oculto'}</Badge>
+                      </td>
+                      <td className="px-4.5 py-3.5">
+                        <button className="btn-act" onClick={() => setEditing(b)}>
+                          Editar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination page={page} total={rows.length} pageSize={8} onPageChange={setPage} />
+          </>
         )}
       </div>
 
