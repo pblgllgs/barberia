@@ -17,10 +17,11 @@ export default function Navbar() {
   const onNav = (link: (typeof links)[number]) => {
     setOpen(false)
     if (link.hash) {
+      const hash = link.to.slice(link.to.indexOf('#'))
       if (location.pathname !== '/') {
-        navigate('/', { state: { scrollTo: link.to.replace('/', '') } })
+        navigate('/', { state: { scrollTo: hash.slice(1) } })
       } else {
-        document.querySelector(link.to)?.scrollIntoView({ behavior: 'smooth' })
+        document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' })
       }
       return
     }

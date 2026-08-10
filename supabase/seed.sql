@@ -41,12 +41,12 @@ on conflict (id) do nothing;
 
 -- Servicios
 insert into public.services (id, name, description, duration_min, price, image_url, is_active, sort_order) values
-  ('10000000-0000-0000-0000-000000000001', 'Corte Clásico', 'Corte con tijera, navaja y finalización a máquina. Incluye lavado y asesoría de estilo.', 30, 12000, 'https://images.unsplash.com/photo-1593702275687-f8b402bf1fb8?w=800&q=80', true, 1),
+  ('10000000-0000-0000-0000-000000000001', 'Corte Clásico', 'Corte con tijera, navaja y finalización a máquina. Incluye lavado y asesoría de estilo.', 30, 12000, 'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=800&q=80', true, 1),
   ('10000000-0000-0000-0000-000000000002', 'Arreglo de Barba', 'Perfilado con navaja, toalla caliente y aceites.', 20, 8000, 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800&q=80', true, 2),
-  ('10000000-0000-0000-0000-000000000003', 'Corte + Barba', 'Corte de autor y barba completa con navaja.', 50, 18000, 'https://images.unsplash.com/photo-1472815405931-17bc6776825e?w=800&q=80', true, 3),
+  ('10000000-0000-0000-0000-000000000003', 'Corte + Barba', 'Corte de autor y barba completa con navaja.', 50, 18000, 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800&q=80', true, 3),
   ('10000000-0000-0000-0000-000000000004', 'Afeitado Clásico', 'Afeitado tradicional con navaja y toalla caliente.', 45, 15000, 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&q=80', true, 4),
-  ('10000000-0000-0000-0000-000000000005', 'Skin Fade', 'Fade preciso con degradado limpio y navaja.', 25, 10000, 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80', true, 5),
-  ('10000000-0000-0000-0000-000000000006', 'Corte Infantil', 'Corte rápido pensado para los más pequeños.', 20, 7000, 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&q=80', true, 6)
+  ('10000000-0000-0000-0000-000000000005', 'Skin Fade', 'Fade preciso con degradado limpio y navaja.', 25, 10000, 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800&q=80', true, 5),
+  ('10000000-0000-0000-0000-000000000006', 'Corte Infantil', 'Corte rápido pensado para los más pequeños.', 20, 7000, 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=800&q=80', true, 6)
 on conflict (id) do nothing;
 
 -- Barberos
