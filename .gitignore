@@ -9,3 +9,5 @@ dist-ssr
 .idea
 .DS_Store
 npm-debug.log*
+supabase/.temp
+supabase/.env.local
