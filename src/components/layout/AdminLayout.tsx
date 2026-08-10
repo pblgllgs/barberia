@@ -26,16 +26,17 @@ export default function AdminLayout() {
       setChecking(false)
       if (!data.session) navigate('/admin/login')
     })
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       setEmail(session?.user.email ?? null)
-      if (!session) navigate('/admin/login')
+      if (event === 'SIGNED_OUT') navigate('/')
+      else if (!session) navigate('/admin/login')
     })
     return () => sub.subscription.unsubscribe()
   }, [navigate])
 
   const logout = async () => {
     await supabase.auth.signOut()
-    navigate('/admin/login')
+    navigate('/')
   }
 
   if (checking) {
