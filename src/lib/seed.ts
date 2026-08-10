@@ -1,0 +1,157 @@
+import type { Service, Barber, Schedule, Booking, BlockedSlot } from './types'
+
+export const seedServices: Service[] = [
+  {
+    id: 'svc-1',
+    name: 'Corte Clásico',
+    description: 'Corte con tijera, navaja y finalización a máquina. Incluye lavado y asesoría de estilo.',
+    duration_min: 30,
+    price: 12000,
+    image_url: 'https://images.unsplash.com/photo-1593702275687-f8b402bf1fb8?w=800&q=80',
+    is_active: true,
+    sort_order: 1,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'svc-2',
+    name: 'Arreglo de Barba',
+    description: 'Perfilado con navaja, toalla caliente y aceites. Define y cuida tu barba.',
+    duration_min: 20,
+    price: 8000,
+    image_url: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800&q=80',
+    is_active: true,
+    sort_order: 2,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'svc-3',
+    name: 'Corte + Barba',
+    description: 'El servicio completo: corte de autor y barba con navaja. Nuestro favorito de los clientes.',
+    duration_min: 50,
+    price: 18000,
+    image_url: 'https://images.unsplash.com/photo-1472815405931-17bc6776825e?w=800&q=80',
+    is_active: true,
+    sort_order: 3,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'svc-4',
+    name: 'Afeitado Clásico',
+    description: 'Afeitado tradicional con navaja, toalla caliente y bálsamo. Una experiencia de spa.',
+    duration_min: 45,
+    price: 15000,
+    image_url: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&q=80',
+    is_active: true,
+    sort_order: 4,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'svc-5',
+    name: 'Skin Fade',
+    description: 'Fade preciso a máquina con degradado limpio y terminación a navaja.',
+    duration_min: 25,
+    price: 10000,
+    image_url: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80',
+    is_active: true,
+    sort_order: 5,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'svc-6',
+    name: 'Corte Infantil',
+    description: 'Corte rápido pensado para los más pequeños. Incluye premio final al estilo clásico.',
+    duration_min: 20,
+    price: 7000,
+    image_url: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&q=80',
+    is_active: true,
+    sort_order: 6,
+    created_at: new Date().toISOString(),
+  },
+]
+
+export const seedBarbers: Barber[] = [
+  {
+    id: 'brb-1',
+    name: 'Damián Rojas',
+    role: 'Corte clásico · Tijera',
+    specialty: 'Cortes vintage y navaja',
+    bio: '14 años de oficio. Referente del corte clásico en el barrio.',
+    image_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=80',
+    is_active: true,
+    sort_order: 1,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'brb-2',
+    name: 'Ignacio Fuentes',
+    role: 'Barba · Fade',
+    specialty: 'Fades precisos y arreglo de barba',
+    bio: 'Perfeccionista del degradado. Técnica japonesa de tijera.',
+    image_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=700&q=80',
+    is_active: true,
+    sort_order: 2,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'brb-3',
+    name: 'Cristóbal Vega',
+    role: 'Corte de autor',
+    specialty: 'Pelo largo y texturizado',
+    bio: 'Estilos de autor para pelo medio y largo.',
+    image_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=700&q=80',
+    is_active: true,
+    sort_order: 3,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'brb-4',
+    name: 'Nicolás Paredes',
+    role: 'Kids · Skin fade',
+    specialty: 'Cortes infantiles y afeitado clásico',
+    bio: 'Paciente con los peques y afilado con navaja de verdad.',
+    image_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=700&q=80',
+    is_active: true,
+    sort_order: 4,
+    created_at: new Date().toISOString(),
+  },
+]
+
+const defaultWindows: Array<{ day: number; start: string; end: string }> = [
+  { day: 1, start: '10:00', end: '13:00' },
+  { day: 1, start: '14:30', end: '20:00' },
+  { day: 2, start: '10:00', end: '13:00' },
+  { day: 2, start: '14:30', end: '20:00' },
+  { day: 3, start: '10:00', end: '13:00' },
+  { day: 3, start: '14:30', end: '20:00' },
+  { day: 4, start: '10:00', end: '13:00' },
+  { day: 4, start: '14:30', end: '20:00' },
+  { day: 5, start: '10:00', end: '13:00' },
+  { day: 5, start: '14:30', end: '20:00' },
+  { day: 6, start: '10:00', end: '14:00' },
+]
+
+export const seedSchedules: Schedule[] = seedBarbers.flatMap((b) =>
+  defaultWindows.map((w) => ({
+    id: `sch-${b.id}-${w.day}`,
+    barber_id: b.id,
+    day_of_week: w.day,
+    start_time: w.start,
+    end_time: w.end,
+    is_active: true,
+    created_at: new Date().toISOString(),
+  })),
+)
+
+export const seedBlockedSlots: BlockedSlot[] = [
+  {
+    id: 'blk-1',
+    barber_id: 'brb-4',
+    date: '',
+    start_time: '12:00',
+    end_time: '13:00',
+    reason: 'Colación',
+    created_at: new Date().toISOString(),
+  },
+]
+
+export const seedBookings: Booking[] = []

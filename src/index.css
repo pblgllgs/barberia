@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+@theme {
+  --color-carbon: #0b0b0d;
+  --color-coal: #141416;
+  --color-smoke: #1d1d21;
+  --color-line: #26262c;
+  --color-line-strong: #3a3a42;
+  --color-ivory: #f2ede4;
+  --color-ash: #8a8579;
+  --color-faint: #4c4c52;
+  --color-brass: #c9a35f;
+  --color-champagne: #e0c48a;
+  --color-success: #4caf7d;
+  --color-warning: #d9a441;
+  --color-error: #d85656;
+  --color-info: #6f9ceb;
+
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-carbon);
+    color: var(--color-ivory);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--color-brass);
+    color: var(--color-carbon);
+  }
+
+  input:autofill,
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px var(--color-smoke) inset;
+    -webkit-text-fill-color: var(--color-ivory);
+    caret-color: var(--color-ivory);
+  }
+}
+
+@layer components {
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-brass);
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .kicker::before {
+    content: "";
+    width: 36px;
+    height: 1px;
+    background-color: var(--color-brass);
+  }
+
+  .label-mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-ash);
+  }
+
+  .meta-mono {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--color-ash);
+  }
+
+  .container-site {
+    width: min(100% - clamp(28px, 5vw, 64px), 1200px);
+    margin-inline: auto;
+  }
+
+  .hairline-t {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .hairline-b {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .card-surface {
+    background: var(--color-coal);
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+  }
+
+  .surface-smoke {
+    background: var(--color-smoke);
+  }
+
+  .btn-act {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    color: var(--color-ash);
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-act:hover {
+    border-color: var(--color-brass);
+    color: var(--color-brass);
+  }
+
+  .btn-act.danger:hover {
+    border-color: var(--color-error);
+    color: var(--color-error);
+  }
+
+  th {
+    white-space: nowrap;
+  }
+}

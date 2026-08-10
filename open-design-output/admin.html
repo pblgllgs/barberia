@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Barba Negra · Panel admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --carbon:#0b0b0d; --coal:#141416; --smoke:#1d1d21; --line:#26262c; --line-strong:#3a3a42;
+  --ivory:#f2ede4; --ash:#8a8579; --faint:#4c4c52; --brass:#c9a35f; --champagne:#e0c48a;
+  --success:#4caf7d; --warning:#d9a441; --error:#d85656;
+  --f-display:"Playfair Display",Georgia,"Times New Roman",serif;
+  --f-sans:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{color-scheme:dark}
+body{background:var(--carbon);color:var(--ivory);font-family:var(--f-sans);font-size:16px;-webkit-font-smoothing:antialiased}
+/* Layout */
+.shell{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.sidebar{border-right:1px solid var(--line);background:var(--coal);padding:24px 16px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+.logo{font-family:var(--f-display);font-size:20px;padding:0 12px;margin-bottom:20px}
+.logo span{color:var(--brass)}
+.logo small{display:block;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-top:2px}
+.snav{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:6px;color:var(--ash);font-size:14px;cursor:pointer;transition:background .2s,color .2s}
+.snav:hover{color:var(--ivory)}
+.snav.active{background:var(--smoke);color:var(--brass)}
+.snav .ico{width:18px;text-align:center;font-family:var(--f-mono)}
+.main{padding:28px clamp(20px,4vw,48px);overflow-x:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.topbar h1{font-family:var(--f-display);font-weight:400;font-size:clamp(1.5rem,2.6vw,2rem)}
+.topbar .user{display:flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;color:var(--ash)}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--smoke);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--brass)}
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--coal);border:1px solid var(--line);border-radius:6px;padding:18px}
+.stat-card .l{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ash)}
+.stat-card .n{font-family:var(--f-display);font-size:26px;margin-top:6px}
+.stat-card .n span{color:var(--brass)}
+/* Table */
+.table-panel{background:var(--coal);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.toolbar{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
+.toolbar .t{font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ash)}
+table{width:100%;border-collapse:collapse}
+thead th{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ash);text-align:left;padding:12px 18px;border-bottom:1px solid var(--line);font-weight:500}
+tbody td{padding:14px 18px;border-bottom:1px solid var(--line);font-size:14px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--smoke)}
+.td-name{font-weight:600}
+.td-mono{font-family:var(--f-mono);font-size:12.5px;color:var(--ash)}
+.badge{display:inline-block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:9999px}
+.badge.confirmed{background:rgba(76,175,125,.14);color:var(--success)}
+.badge.pending{background:rgba(217,164,65,.14);color:var(--warning)}
+.badge.cancelled{background:rgba(216,86,86,.14);color:var(--error)}
+.badge.completed{background:rgba(111,156,235,.14);color:var(--info)}
+.actions{display:flex;gap:8px}
+.act{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:transparent;border:1px solid var(--line);border-radius:6px;color:var(--ash);padding:6px 12px;cursor:pointer;transition:border-color .2s,color .2s}
+.act:hover{border-color:var(--brass);color:var(--brass)}
+.act.danger:hover{border-color:var(--error);color:var(--error)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--brass);color:var(--carbon);font-family:var(--f-sans);font-size:13.5px;font-weight:600;padding:10px 18px;border-radius:6px;border:none;cursor:pointer}
+.btn:hover{background:var(--champagne)}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ivory);font-size:13px;padding:10px 16px}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.sidebar{display:none}.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo">Barba <span>Negra</span><small>Panel admin</small></div>
+    <div class="snav active"><span class="ico">▦</span> Reservas</div>
+    <div class="snav"><span class="ico">✂</span> Servicios</div>
+    <div class="snav"><span class="ico">◈</span> Barberos</div>
+    <div class="snav"><span class="ico">🕒</span> Horarios</div>
+    <div class="snav active" style="margin-top:auto;margin-inline:-4px"><span class="ico">↪</span> Cerrar sesión</div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h1>Reservas</h1>
+      <div class="user"><span class="avatar">DA</span> admin@barbanegra.cl</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card"><div class="l">Hoy</div><div class="n">11</div></div>
+      <div class="stat-card"><div class="l">Pendientes</div><div class="n">4</div></div>
+      <div class="stat-card"><div class="l">Esta semana</div><div class="n">47</div></div>
+      <div class="stat-card"><div class="l">Ingresos</div><div class="n"><span>$</span> 612.000</div></div>
+    </div>
+
+    <div class="table-panel">
+      <div class="toolbar"><span class="t">Próximas horas</span><div><button class="btn btn-ghost" style="margin-right:8px">Hoy</button><button class="btn">+ Nueva reserva</button></div></div>
+      <table>
+        <thead>
+          <tr><th>Fecha</th><th>Cliente</th><th>Servicio</th><th>Barbero</th><th>Estado</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="td-mono">Hoy · 10:00</td><td class="td-name">Matías Contreras</td><td>Corte Clásico</td><td class="td-mono">D. Rojas</td><td><span class="badge confirmed">Confirmada</span></td><td><div class="actions"><button class="act">Editar</button><button class="act danger">Cancelar</button></div></td></tr>
+          <tr><td class="td-mono">Hoy · 11:30</td><td class="td-name">Franco Silva</td><td>Corte + Barba</td><td class="td-mono">I. Fuentes</td><td><span class="badge pending">Pendiente</span></td><td><div class="actions"><button class="act">Editar</button><button class="act danger">Cancelar</button></div></td></tr>
+          <tr><td class="td-mono">Hoy · 12:20</td><td class="td-name">Joaquín Mena</td><td>Arreglo de Barba</td><td class="td-mono">C. Vega</td><td><span class="badge confirmed">Confirmada</span></td><td><div class="actions"><button class="act">Editar</button><button class="act danger">Cancelar</button></div></td></tr>
+          <tr><td class="td-mono">Mañana · 16:40</td><td class="td-name">Renato Peña</td><td>Afeitado clásico</td><td class="td-mono">N. Paredes</td><td><span class="badge pending">Pendiente</span></td><td><div class="actions"><button class="act">Editar</button><button class="act danger">Cancelar</button></div></td></tr>
+          <tr><td class="td-mono">Mañana · 17:30</td><td class="td-name">Rodrigo Fuentes</td><td>Corte Clásico</td><td class="td-mono">D. Rojas</td><td><span class="badge cancelled">Cancelada</span></td><td><div class="actions"><button class="act">Editar</button></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>
