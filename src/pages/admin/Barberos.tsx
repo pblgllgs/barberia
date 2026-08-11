@@ -3,6 +3,7 @@ import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import { Field, Input, Select, Textarea } from '@/components/ui/Field'
 import { EmptyState, Spinner } from '@/components/ui/Feedback'
+import ImageUpload from '@/components/ui/ImageUpload'
 import Modal from '@/components/ui/Modal'
 import Pagination from '@/components/ui/Pagination'
 import { useToast } from '@/components/ui/Toast'
@@ -155,8 +156,8 @@ function BarberModal({
         <Field label="Bio">
           <Textarea value={form.bio ?? ''} onChange={(e) => set('bio', e.target.value)} />
         </Field>
-        <Field label="Imagen (URL)">
-          <Input value={form.image_url ?? ''} onChange={(e) => set('image_url', e.target.value || null)} placeholder="https://..." />
+        <Field label="Imagen">
+          <ImageUpload value={form.image_url} onChange={(u) => set('image_url', u || null)} />
         </Field>
         <Field label="Orden">
           <Input type="number" value={form.sort_order} onChange={(e) => set('sort_order', Number(e.target.value))} />

@@ -73,6 +73,14 @@ El SPA routing se maneja con el archivo `public/_redirects` (incluido en el bund
 - Usuario admin seed: `admin@barbanegra.cl` / `admin123`
 - Para aplicar cambios al esquema: `supabase db push` (proyecto linked).
 
+## Imágenes (Cloudflare R2)
+
+Las imágenes de servicios y barberos se suben desde el panel admin a un bucket **Cloudflare R2** (`barberia-images`), servidas por el Worker `barberia-images` (ruta `workers/images/`):
+
+- Subida: `POST https://barberia-images.pablogallegosgonzalez.workers.dev/upload` (requiere sesión admin, máx. 5 MB)
+- Lectura pública: `GET /{archivo}`
+- En el repo, el Worker se redeploya automáticamente con el workflow de Cloudflare.
+
 ## Comandos
 
 ```bash
