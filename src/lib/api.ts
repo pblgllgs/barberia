@@ -1,7 +1,7 @@
 import { supabase, isSupabaseConfigured } from './supabase'
 import type { Service, Barber, Schedule, Booking, BlockedSlot, Coupon } from './types'
 import { seedServices, seedBarbers, seedSchedules, seedBlockedSlots } from './seed'
-import { dayOfWeek, fromMin, generateBookingCode, toMin } from './utils'
+import { dayOfWeek, fromMin, generateBookingCode, toMin, todayStr } from './utils'
 
 const DEMO_KEYS = {
   services: 'bn_services',
@@ -330,7 +330,7 @@ export function computeAvailableSlots(
     .map((bl) => ({ start: toMin(bl.start_time), end: toMin(bl.end_time) }))
 
   const past = (time: string) => {
-    const today = new Date().toISOString().slice(0, 10)
+    const today = todayStr()
     if (date < today) return true
     if (date > today) return false
     return toMin(time) <= new Date().getHours() * 60 + new Date().getMinutes() + 45
