@@ -6,6 +6,8 @@ import Button from '@/components/ui/Button'
 import { Field, Select } from '@/components/ui/Field'
 import { EmptyState, Spinner } from '@/components/ui/Feedback'
 import Modal from '@/components/ui/Modal'
+import Pagination from '@/components/ui/Pagination'
+import { usePagination } from '@/lib/usePagination'
 import { getMyBookings, getMyCoupons, getServices, redeemLoyalty } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import type { Booking, Coupon, Service } from '@/lib/types'
@@ -64,6 +66,8 @@ export default function Perfil() {
         .sort((a, b) => b.date.localeCompare(a.date) || b.start_time.localeCompare(b.start_time)),
     [bookings],
   )
+
+  const { page, setPage, paged: historyPage } = usePagination(history, 10)
 
   const svcName = (id: string | null) => services.find((s) => s.id === id)?.name ?? 'Cualquier servicio'
 
@@ -172,10 +176,35 @@ export default function Perfil() {
       {history.length === 0 ? (
         <EmptyState title="Sin visitas aún" detail="Tus visitas completadas aparecerán aquí." />
       ) : (
-        <div className="space-y-3">
-          {history.map((b) => (
-            <BookingRow key={b.id} b={b} svcName={svcName} />
-          ))}
+        <div className="card-surface overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[560px]">
+              <thead>
+                <tr>
+                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Fecha</th>
+                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Servicio</th>
+                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Código</th>
+                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {historyPage.map((b) => (
+                  <tr key={b.id} className="border-t border-line hover:bg-smoke">
+                    <td className="px-4.5 py-3.5">
+                      <div className="font-mono text-[12.5px] text-ash">{formatDateLong(b.date)}</div>
+                      <div className="font-mono text-[12.5px] text-brass">{b.start_time}</div>
+                    </td>
+                    <td className="px-4.5 py-3.5 text-sm">{svcName(b.service_id)}</td>
+                    <td className="px-4.5 py-3.5 font-mono text-[12px] tracking-[0.06em] text-ash">{b.code}</td>
+                    <td className="px-4.5 py-3.5">
+                      <Badge tone={toneFromStatus(b.status)}>{statusLabels[b.status]}</Badge>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Pagination page={page} total={history.length} pageSize={10} onPageChange={setPage} />
         </div>
       )}
 
