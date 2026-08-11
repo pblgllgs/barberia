@@ -14,7 +14,13 @@ Web de una barbería con **reserva de horas en línea** y **panel de administrac
 
 - **Reservas públicas:** `/reservar`
 - **Mis reservas:** `/mis-reservas` (por código o teléfono)
+- **Registro de clientes:** `/registro` — crea tu cuenta para ver tu historial y acumular tu beneficio
+- **Perfil:** `/perfil` — historial de reservas, progreso de fidelidad y canje de tu servicio gratis
 - **Panel admin:** `/admin` → `admin@barbanegra.cl` / `admin123` (botón "Admin" en el footer)
+
+## Programa de fidelidad
+
+Cada cliente registrado acumula **visitas completadas** (reservas marcadas como *completadas* en el panel admin). Con **10 visitas** desbloquea un **cupón para un servicio gratis a elección**, visible y canjeable desde su perfil.
 
 ## Requisitos
 

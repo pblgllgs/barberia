@@ -1,5 +1,5 @@
 import { supabase, isSupabaseConfigured } from './supabase'
-import type { Service, Barber, Schedule, Booking, BlockedSlot } from './types'
+import type { Service, Barber, Schedule, Booking, BlockedSlot, Coupon } from './types'
 import { seedServices, seedBarbers, seedSchedules, seedBlockedSlots } from './seed'
 import { dayOfWeek, fromMin, generateBookingCode, toMin } from './utils'
 
@@ -9,6 +9,7 @@ const DEMO_KEYS = {
   schedules: 'bn_schedules',
   blocked: 'bn_blocked',
   bookings: 'bn_bookings',
+  coupons: 'bn_coupons',
 }
 
 function loadLocal<T>(key: string, fallback: T): T {
@@ -56,6 +57,12 @@ class DemoStore {
   set bookings(v: Booking[]) {
     saveLocal(DEMO_KEYS.bookings, v)
   }
+  get coupons() {
+    return loadLocal<Coupon[]>(DEMO_KEYS.coupons, [])
+  }
+  set coupons(v: Coupon[]) {
+    saveLocal(DEMO_KEYS.coupons, v)
+  }
 }
 
 const demo = new DemoStore()
@@ -97,13 +104,14 @@ export async function getBookings(): Promise<Booking[]> {
 }
 
 export async function createBooking(
-  input: Omit<Booking, 'id' | 'code' | 'status' | 'created_at'>,
+  input: Omit<Booking, 'id' | 'code' | 'status' | 'created_at' | 'user_id'> & { user_id?: string | null },
 ): Promise<Booking> {
   const record: Booking = {
     ...input,
     id: crypto.randomUUID(),
     code: generateBookingCode(),
     status: 'pending',
+    user_id: input.user_id ?? null,
     created_at: new Date().toISOString(),
   }
   if (!online()) {
@@ -112,7 +120,7 @@ export async function createBooking(
   }
   const { data, error } = await supabase
     .from('bookings')
-    .insert({ ...input, code: record.code, status: 'pending' })
+    .insert({ ...input, user_id: record.user_id, code: record.code, status: 'pending' })
     .select()
     .single()
   if (error) throw error
@@ -161,6 +169,55 @@ export async function cancelPublicBooking(id: string, code: string): Promise<voi
   }
   const { error } = await supabase.rpc('bc_cancel_public', { p_booking_id: id, p_code: code })
   if (error) throw error
+}
+
+/* ---- Perfil de cliente + fidelidad ---- */
+
+export async function getMyBookings(userId: string): Promise<Booking[]> {
+  if (!online()) return demo.bookings.filter((b) => b.user_id === userId)
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*')
+    .eq('user_id', userId)
+    .order('date', { ascending: false })
+  if (error) throw error
+  return (data ?? []) as Booking[]
+}
+
+export async function getMyCoupons(userId: string): Promise<Coupon[]> {
+  if (!online()) return demo.coupons.filter((c) => c.user_id === userId)
+  const { data, error } = await supabase
+    .from('coupons')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return (data ?? []) as Coupon[]
+}
+
+export async function redeemLoyalty(userId: string, serviceId: string): Promise<Coupon> {
+  if (!online()) {
+    const completed = demo.bookings.filter((b) => b.user_id === userId && b.status === 'completed').length
+    const redeemed = demo.coupons
+      .filter((c) => c.user_id === userId && c.status !== 'cancelled')
+      .reduce((acc, c) => acc + c.redeemed_visits, 0)
+    if (completed - redeemed < 10) throw new Error('Necesitas 10 visitas completadas para canjear tu beneficio')
+    const coupon: Coupon = {
+      id: crypto.randomUUID(),
+      user_id: userId,
+      code: `BN-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+      service_id: serviceId,
+      redeemed_visits: 10,
+      status: 'available',
+      created_at: new Date().toISOString(),
+      used_at: null,
+    }
+    demo.coupons = [...demo.coupons, coupon]
+    return coupon
+  }
+  const { data, error } = await supabase.rpc('bc_redeem_loyalty', { p_service_id: serviceId })
+  if (error) throw error
+  return (data ?? {}) as Coupon
 }
 
 /* ---- Disponibilidad ---- */

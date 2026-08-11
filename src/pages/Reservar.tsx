@@ -5,12 +5,14 @@ import { Field, Input, Textarea } from '@/components/ui/Field'
 import { Spinner } from '@/components/ui/Feedback'
 import { computeAvailableSlots, createBooking, getBarbers, getBlockedSlots, getBookedSlots, getSchedules, getServices } from '@/lib/api'
 import type { BookedRange } from '@/lib/api'
+import { useAuth } from '@/lib/auth'
 import type { Service, Barber, Schedule, Booking, BlockedSlot } from '@/lib/types'
 import { DAY_NAMES, addDays, dayOfWeek, formatDateLong, formatPrice, todayStr } from '@/lib/utils'
 
 const steps = ['Servicio', 'Barbero', 'Fecha y hora', 'Confirmación']
 
 export default function Reservar() {
+  const { user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [services, setServices] = useState<Service[]>([])
   const [barbers, setBarbers] = useState<Barber[]>([])
@@ -67,6 +69,10 @@ export default function Reservar() {
   const canContinue2 = Boolean(barber)
   const canContinue3 = Boolean(slot && name.trim() && phone.trim().length >= 8)
 
+  useEffect(() => {
+    if (user?.user_metadata?.full_name) setName(user.user_metadata.full_name as string)
+  }, [user])
+
   async function confirm() {
     if (!service || !barber || !slot) return
     setCreating(true)
@@ -74,7 +80,8 @@ export default function Reservar() {
     const booking = await createBooking({
       client_name: name.trim(),
       client_phone: phone.trim(),
-      email: null,
+      email: user?.email ?? null,
+      user_id: user?.id ?? null,
       service_id: service.id,
       barber_id: barber.id,
       date,

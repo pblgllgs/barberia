@@ -186,7 +186,7 @@ function NewBookingModal({
   services: { id: string; name: string; duration_min: number; price: number }[]
   barbers: { id: string; name: string }[]
   saving: boolean
-  onSave: (input: Omit<Booking, 'id' | 'code' | 'status' | 'created_at'>) => void
+  onSave: (input: Omit<Booking, 'id' | 'code' | 'status' | 'created_at' | 'user_id'> & { user_id?: string | null }) => void
   onClose: () => void
 }) {
   const [name, setName] = useState('')

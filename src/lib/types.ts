@@ -40,6 +40,7 @@ export interface Booking {
   client_name: string
   client_phone: string
   email: string | null
+  user_id: string | null
   service_id: string
   barber_id: string
   date: string
@@ -72,4 +73,15 @@ export interface Profile {
   full_name: string | null
   role: 'admin' | 'client' | null
   created_at: string
+}
+
+export interface Coupon {
+  id: string
+  user_id: string
+  code: string
+  service_id: string | null
+  redeemed_visits: number
+  status: 'available' | 'used' | 'cancelled'
+  created_at: string
+  used_at: string | null
 }

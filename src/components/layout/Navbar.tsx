@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, LogOut, User } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import { useAuth } from '@/lib/auth'
 
 const links = [
   { to: '/', label: 'Inicio', end: true },
@@ -13,6 +14,7 @@ const links = [
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
+  const { user, signOut } = useAuth()
 
   const onNav = (link: (typeof links)[number]) => {
     setOpen(false)
@@ -25,6 +27,12 @@ export default function Navbar() {
       }
       return
     }
+  }
+
+  const onSignOut = async () => {
+    setOpen(false)
+    await signOut()
+    navigate('/')
   }
 
   return (
@@ -65,6 +73,32 @@ export default function Navbar() {
               Reservar hora
             </Button>
           </Link>
+          {user ? (
+            <div className="hidden items-center gap-1 md:flex">
+              <NavLink
+                to="/perfil"
+                className={({ isActive }) =>
+                  `flex items-center gap-1.5 text-[13px] transition-colors hover:text-brass ${
+                    isActive ? 'text-brass' : 'text-ash'
+                  }`
+                }
+              >
+                <User size={15} />
+                Mi perfil
+              </NavLink>
+              <button
+                onClick={onSignOut}
+                className="ml-2 flex items-center gap-1.5 text-[13px] text-ash transition-colors hover:text-error"
+                title="Cerrar sesión"
+              >
+                <LogOut size={15} />
+              </button>
+            </div>
+          ) : (
+            <Link to="/iniciar-sesion" className="hidden text-[13px] text-ash transition-colors hover:text-brass md:block">
+              Ingresar
+            </Link>
+          )}
           <button
             className="text-ivory md:hidden"
             onClick={() => setOpen((v) => !v)}
@@ -86,6 +120,23 @@ export default function Navbar() {
               {l.label}
             </button>
           ))}
+          {user ? (
+            <>
+              <Link to="/perfil" className="block w-full py-3 text-left font-mono text-xs uppercase tracking-[0.14em] text-brass" onClick={() => setOpen(false)}>
+                Mi perfil
+              </Link>
+              <button
+                onClick={onSignOut}
+                className="block w-full py-3 text-left font-mono text-xs uppercase tracking-[0.14em] text-error"
+              >
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <Link to="/iniciar-sesion" className="block w-full py-3 text-left font-mono text-xs uppercase tracking-[0.14em] text-brass" onClick={() => setOpen(false)}>
+              Ingresar / Registrarse
+            </Link>
+          )}
           <Link to="/reservar" className="mt-2 block" onClick={() => setOpen(false)}>
             <Button className="w-full">Reservar hora</Button>
           </Link>

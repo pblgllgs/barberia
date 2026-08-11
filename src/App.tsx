@@ -3,6 +3,9 @@ import SiteLayout from '@/components/layout/SiteLayout'
 import Home from '@/pages/Home'
 import Reservar from '@/pages/Reservar'
 import MisReservas from '@/pages/MisReservas'
+import Registro from '@/pages/Registro'
+import IniciarSesion from '@/pages/IniciarSesion'
+import Perfil from '@/pages/Perfil'
 import AdminLayout from '@/components/layout/AdminLayout'
 import Login from '@/pages/admin/Login'
 import Dashboard from '@/pages/admin/Dashboard'
@@ -18,6 +21,9 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="reservar" element={<Reservar />} />
         <Route path="mis-reservas" element={<MisReservas />} />
+        <Route path="registro" element={<Registro />} />
+        <Route path="iniciar-sesion" element={<IniciarSesion />} />
+        <Route path="perfil" element={<Perfil />} />
       </Route>
       <Route path="admin/login" element={<Login />} />
       <Route path="admin" element={<AdminLayout />}>
