@@ -68,6 +68,7 @@ export default function Perfil() {
   )
 
   const { page, setPage, paged: historyPage } = usePagination(history, 10)
+  const { page: upPage, setPage: setUpPage, paged: upcomingPage } = usePagination(upcoming, 10)
 
   const svcName = (id: string | null) => services.find((s) => s.id === id)?.name ?? 'Cualquier servicio'
 
@@ -164,10 +165,35 @@ export default function Perfil() {
       {upcoming.length === 0 ? (
         <EmptyState title="Sin próximas reservas" detail="Reserva tu hora desde la página de reservas." />
       ) : (
-        <div className="mb-10 space-y-3">
-          {upcoming.map((b) => (
-            <BookingRow key={b.id} b={b} svcName={svcName} />
-          ))}
+        <div className="card-surface mb-10 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[560px]">
+              <thead>
+                <tr>
+                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Fecha</th>
+                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Servicio</th>
+                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Código</th>
+                  <th className="px-4.5 py-3 text-left font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ash">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {upcomingPage.map((b) => (
+                  <tr key={b.id} className="border-t border-line hover:bg-smoke">
+                    <td className="px-4.5 py-3.5">
+                      <div className="font-mono text-[12.5px] text-ash">{formatDateLong(b.date)}</div>
+                      <div className="font-mono text-[12.5px] text-brass">{b.start_time}</div>
+                    </td>
+                    <td className="px-4.5 py-3.5 text-sm">{svcName(b.service_id)}</td>
+                    <td className="px-4.5 py-3.5 font-mono text-[12px] tracking-[0.06em] text-ash">{b.code}</td>
+                    <td className="px-4.5 py-3.5">
+                      <Badge tone={toneFromStatus(b.status)}>{statusLabels[b.status]}</Badge>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Pagination page={upPage} total={upcoming.length} pageSize={10} onPageChange={setUpPage} />
         </div>
       )}
 
@@ -232,23 +258,6 @@ export default function Perfil() {
           </div>
         </Modal>
       )}
-    </div>
-  )
-}
-
-function BookingRow({ b, svcName }: { b: Booking; svcName: (id: string | null) => string }) {
-  return (
-    <div className="card-surface flex flex-wrap items-start justify-between gap-3 p-5">
-      <div>
-        <div className="flex items-center gap-3">
-          <span className="font-display text-lg">{svcName(b.service_id)}</span>
-          <Badge tone={toneFromStatus(b.status)}>{statusLabels[b.status]}</Badge>
-        </div>
-        <div className="mt-1 font-mono text-[12.5px] tracking-[0.08em] text-brass">{b.code}</div>
-        <div className="mt-1.5 text-sm text-ash">
-          {formatDateLong(b.date)} · {b.start_time} · {b.duration_min} min
-        </div>
-      </div>
     </div>
   )
 }
