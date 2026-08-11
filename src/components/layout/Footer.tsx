@@ -35,12 +35,7 @@ export default function Footer() {
         </div>
         <div className="flex flex-wrap justify-between gap-2 py-5 font-mono text-[11.5px] tracking-[0.08em] text-faint">
           <span>© 2026 Barba Negra Barbershop</span>
-          <div className="flex items-center gap-4">
-            <span>Hecho con oficio</span>
-            <Link to="/admin" className="text-ash transition-colors hover:text-brass">
-              Admin
-            </Link>
-          </div>
+          <span>Hecho con oficio</span>
         </div>
       </div>
     </footer>
