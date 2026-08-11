@@ -3,6 +3,7 @@ import Button from '@/components/ui/Button'
 import Badge, { toneFromStatus } from '@/components/ui/Badge'
 import { Field, Input } from '@/components/ui/Field'
 import { EmptyState, Spinner } from '@/components/ui/Feedback'
+import { useToast } from '@/components/ui/Toast'
 import { cancelPublicBooking, findBookingByCodeOrPhone, getServices } from '@/lib/api'
 import type { Booking } from '@/lib/types'
 import { formatDateLong, formatPrice, statusLabels } from '@/lib/utils'
@@ -14,6 +15,7 @@ export default function MisReservas() {
   const [services, setServices] = useState<Record<string, string>>({})
   const [error, setError] = useState('')
   const [searching, setSearching] = useState(false)
+  const { toast } = useToast()
 
   async function search() {
     if (!query.trim()) return
@@ -42,6 +44,7 @@ export default function MisReservas() {
   async function cancel(b: Booking) {
     await cancelPublicBooking(b.id, b.code)
     setBookings((prev) => (prev ?? []).map((x) => (x.id === b.id ? { ...x, status: 'cancelled' } : x)))
+    toast('Reserva cancelada', 'info')
   }
 
   return (

@@ -3,6 +3,7 @@ import { Check } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import { Field, Input, Textarea } from '@/components/ui/Field'
 import { Spinner } from '@/components/ui/Feedback'
+import { useToast } from '@/components/ui/Toast'
 import { computeAvailableSlots, createBooking, getBarbers, getBlockedSlots, getBookedSlots, getSchedules, getServices } from '@/lib/api'
 import type { BookedRange } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
@@ -31,6 +32,7 @@ export default function Reservar() {
   const [creating, setCreating] = useState(false)
   const [result, setResult] = useState<Booking | null>(null)
   const [error, setError] = useState('')
+  const { toast } = useToast()
 
   useEffect(() => {
     Promise.all([getServices(), getBarbers(), getSchedules(), getBlockedSlots()])
@@ -98,7 +100,10 @@ export default function Reservar() {
     if (booking) {
       setResult(booking)
       setStep(4)
+      toast('¡Reserva confirmada!')
       window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      toast('No se pudo guardar la reserva.', 'error')
     }
   }
 

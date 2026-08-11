@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { CalendarDays, Scissors, User as UserIcon, Clock, LogOut } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { Spinner } from '@/components/ui/Feedback'
+import { useToast } from '@/components/ui/Toast'
 
 const nav = [
   { to: '/admin', label: 'Reservas', icon: CalendarDays, end: true },
@@ -15,6 +16,7 @@ export default function AdminLayout() {
   const [email, setEmail] = useState<string | null>(null)
   const [checking, setChecking] = useState(true)
   const navigate = useNavigate()
+  const { toast } = useToast()
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -36,6 +38,7 @@ export default function AdminLayout() {
 
   const logout = async () => {
     await supabase.auth.signOut()
+    toast('Sesión cerrada', 'info')
     navigate('/')
   }
 

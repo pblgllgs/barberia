@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Menu, X, LogOut, User } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import { useToast } from '@/components/ui/Toast'
 import { useAuth } from '@/lib/auth'
 
 const links = [
@@ -15,6 +16,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const { user, signOut } = useAuth()
+  const { toast } = useToast()
 
   const onNav = (link: (typeof links)[number]) => {
     setOpen(false)
@@ -32,6 +34,7 @@ export default function Navbar() {
   const onSignOut = async () => {
     setOpen(false)
     await signOut()
+    toast('Sesión cerrada', 'info')
     navigate('/')
   }
 

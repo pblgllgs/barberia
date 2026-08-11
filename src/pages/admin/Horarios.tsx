@@ -5,6 +5,7 @@ import { Field, Input, Select } from '@/components/ui/Field'
 import { EmptyState, Spinner } from '@/components/ui/Feedback'
 import Modal from '@/components/ui/Modal'
 import Pagination from '@/components/ui/Pagination'
+import { useToast } from '@/components/ui/Toast'
 import { usePagination } from '@/lib/usePagination'
 import { getBarbers, getSchedules, saveSchedule, deleteSchedule } from '@/lib/api'
 import type { Barber, Schedule } from '@/lib/types'
@@ -40,16 +41,28 @@ export default function Horarios() {
   }, [rows, barberFilter])
 
   const { page, setPage, paged } = usePagination(shown, 10)
+  const { toast } = useToast()
 
   async function toggle(s: Schedule) {
     const next = { ...s, is_active: !s.is_active }
     setRows((prev) => prev.map((x) => (x.id === s.id ? next : x)))
-    await saveSchedule(next).catch(() => reload())
+    try {
+      await saveSchedule(next)
+      toast(next.is_active ? 'Horario activado' : 'Horario desactivado', 'info')
+    } catch {
+      toast('No se pudo actualizar el horario', 'error')
+      reload()
+    }
   }
 
   async function remove(s: Schedule) {
     if (!confirm(`¿Eliminar horario de ${barberName(s.barber_id)} (${DAY_NAMES[s.day_of_week]})?`)) return
-    await deleteSchedule(s.id).catch(() => {})
+    try {
+      await deleteSchedule(s.id)
+      toast('Horario eliminado', 'info')
+    } catch {
+      toast('No se pudo eliminar el horario', 'error')
+    }
     reload()
   }
 
@@ -132,7 +145,12 @@ export default function Horarios() {
           saving={saving}
           onSave={async (input) => {
             setSaving(true)
-            await saveSchedule(input).catch(() => {})
+            try {
+              await saveSchedule(input)
+              toast('Horario creado')
+            } catch {
+              toast('No se pudo crear el horario', 'error')
+            }
             setSaving(false)
             setCreating(false)
             reload()

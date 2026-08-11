@@ -5,6 +5,7 @@ import { Field, Input, Select } from '@/components/ui/Field'
 import { EmptyState, Spinner } from '@/components/ui/Feedback'
 import Modal from '@/components/ui/Modal'
 import Pagination from '@/components/ui/Pagination'
+import { useToast } from '@/components/ui/Toast'
 import { usePagination } from '@/lib/usePagination'
 import { createBooking, deleteBooking, getBarbers, getBookings, getServices, updateBookingStatus } from '@/lib/api'
 import type { Booking, BookingStatus } from '@/lib/types'
@@ -46,19 +47,30 @@ export default function ReservasAdmin() {
   }, [bookings, filter])
 
   const { page, setPage, paged } = usePagination(shown, 10)
+  const { toast } = useToast()
 
   const svcName = (id: string) => services.find((s) => s.id === id)?.name ?? '—'
   const brbName = (id: string) => barbers.find((b) => b.id === id)?.name ?? '—'
 
   async function changeStatus(b: Booking, status: BookingStatus) {
-    await updateBookingStatus(b.id, status).catch(() => {})
-    setBookings((prev) => prev.map((x) => (x.id === b.id ? { ...x, status } : x)))
+    try {
+      await updateBookingStatus(b.id, status)
+      toast(`Reserva marcada como ${statusLabels[status].toLowerCase()}`)
+      setBookings((prev) => prev.map((x) => (x.id === b.id ? { ...x, status } : x)))
+    } catch {
+      toast('No se pudo actualizar el estado', 'error')
+    }
   }
 
   async function remove(b: Booking) {
     if (!confirm(`¿Eliminar la reserva de ${b.client_name}?`)) return
-    await deleteBooking(b.id).catch(() => {})
-    setBookings((prev) => prev.filter((x) => x.id !== b.id))
+    try {
+      await deleteBooking(b.id)
+      toast('Reserva eliminada', 'info')
+      setBookings((prev) => prev.filter((x) => x.id !== b.id))
+    } catch {
+      toast('No se pudo eliminar la reserva', 'error')
+    }
   }
 
   return (
@@ -165,8 +177,11 @@ export default function ReservasAdmin() {
             const rec = await createBooking(input).catch(() => null)
             setSaving(false)
             if (rec) {
+              toast('Reserva creada')
               setCreating(false)
               reload()
+            } else {
+              toast('No se pudo crear la reserva', 'error')
             }
           }}
           onClose={() => setCreating(false)}

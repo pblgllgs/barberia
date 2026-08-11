@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Button from '@/components/ui/Button'
 import { Field, Input } from '@/components/ui/Field'
+import { useToast } from '@/components/ui/Toast'
 import { useAuth } from '@/lib/auth'
 
 export default function Registro() {
@@ -12,6 +13,7 @@ export default function Registro() {
   const [info, setInfo] = useState('')
   const [loading, setLoading] = useState(false)
   const { signUp } = useAuth()
+  const { toast } = useToast()
   const navigate = useNavigate()
 
   async function submit(e: React.FormEvent) {
@@ -26,12 +28,14 @@ export default function Registro() {
     setLoading(false)
     if (res.error) {
       setError(res.error)
+      toast(res.error, 'error')
       return
     }
     if (res.needsConfirmation) {
       setInfo('Revisa tu correo para confirmar la cuenta antes de iniciar sesión.')
       return
     }
+    toast('¡Cuenta creada! Bienvenido')
     navigate('/perfil')
   }
 

@@ -7,6 +7,7 @@ import { Field, Select } from '@/components/ui/Field'
 import { EmptyState, Spinner } from '@/components/ui/Feedback'
 import Modal from '@/components/ui/Modal'
 import Pagination from '@/components/ui/Pagination'
+import { useToast } from '@/components/ui/Toast'
 import { usePagination } from '@/lib/usePagination'
 import { getMyBookings, getMyCoupons, getServices, redeemLoyalty } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
@@ -25,6 +26,7 @@ export default function Perfil() {
   const [redeemOpen, setRedeemOpen] = useState(false)
   const [redeemError, setRedeemError] = useState('')
   const [redeemResult, setRedeemResult] = useState<Coupon | null>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     if (!user) return
@@ -85,6 +87,9 @@ export default function Perfil() {
       setRedeemResult(coupon)
       setRedeemOpen(false)
       setCoupons((prev) => [coupon, ...prev])
+      toast('¡Beneficio canjeado! Revisa tu cupón')
+    } else {
+      toast(redeemError || 'No pudimos canjear tu beneficio.', 'error')
     }
   }
 

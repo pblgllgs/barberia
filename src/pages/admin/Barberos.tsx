@@ -5,6 +5,7 @@ import { Field, Input, Select, Textarea } from '@/components/ui/Field'
 import { EmptyState, Spinner } from '@/components/ui/Feedback'
 import Modal from '@/components/ui/Modal'
 import Pagination from '@/components/ui/Pagination'
+import { useToast } from '@/components/ui/Toast'
 import { usePagination } from '@/lib/usePagination'
 import { getBarbers, saveBarber } from '@/lib/api'
 import type { Barber } from '@/lib/types'
@@ -26,6 +27,7 @@ export default function Barberos() {
   const [creating, setCreating] = useState(false)
   const [saving, setSaving] = useState(false)
   const { page, setPage, paged } = usePagination(rows, 8)
+  const { toast } = useToast()
 
   const reload = useCallback(() => {
     getBarbers().then(setRows).catch(() => {}).finally(() => setLoading(false))
@@ -37,7 +39,12 @@ export default function Barberos() {
 
   async function persist(input: Partial<Barber> & { id?: string }) {
     setSaving(true)
-    await saveBarber(input).catch(() => {})
+    try {
+      await saveBarber(input)
+      toast(input.id ? 'Barbero actualizado' : 'Barbero creado')
+    } catch {
+      toast('No se pudo guardar el barbero', 'error')
+    }
     setSaving(false)
     setEditing(null)
     setCreating(false)

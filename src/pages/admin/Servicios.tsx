@@ -5,6 +5,7 @@ import { Field, Input, Select, Textarea } from '@/components/ui/Field'
 import { EmptyState, Spinner } from '@/components/ui/Feedback'
 import Modal from '@/components/ui/Modal'
 import Pagination from '@/components/ui/Pagination'
+import { useToast } from '@/components/ui/Toast'
 import { usePagination } from '@/lib/usePagination'
 import { getServices, saveService } from '@/lib/api'
 import type { Service } from '@/lib/types'
@@ -27,6 +28,7 @@ export default function Servicios() {
   const [creating, setCreating] = useState(false)
   const [saving, setSaving] = useState(false)
   const { page, setPage, paged } = usePagination(rows, 8)
+  const { toast } = useToast()
 
   const reload = useCallback(() => {
     getServices().then(setRows).catch(() => {}).finally(() => setLoading(false))
@@ -38,7 +40,12 @@ export default function Servicios() {
 
   async function persist(input: Partial<Service> & { id?: string }) {
     setSaving(true)
-    await saveService(input).catch(() => {})
+    try {
+      await saveService(input)
+      toast(input.id ? 'Servicio actualizado' : 'Servicio creado')
+    } catch {
+      toast('No se pudo guardar el servicio', 'error')
+    }
     setSaving(false)
     setEditing(null)
     setCreating(false)
