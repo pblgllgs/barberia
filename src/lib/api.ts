@@ -173,6 +173,17 @@ export async function cancelPublicBooking(id: string, code: string): Promise<voi
 
 /* ---- Perfil de cliente + fidelidad ---- */
 
+export async function getProfileRole(userId: string): Promise<string | null> {
+  if (!online()) return null
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', userId)
+    .maybeSingle()
+  if (error) throw error
+  return (data?.role as string | null) ?? null
+}
+
 export async function getMyBookings(userId: string): Promise<Booking[]> {
   if (!online()) return demo.bookings.filter((b) => b.user_id === userId)
   const { data, error } = await supabase

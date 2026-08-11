@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Button from '@/components/ui/Button'
 import { Field, Input } from '@/components/ui/Field'
 import { useAuth } from '@/lib/auth'
+import { getProfileRole } from '@/lib/api'
 
 export default function IniciarSesion() {
   const [email, setEmail] = useState('')
@@ -22,7 +23,9 @@ export default function IniciarSesion() {
       setError(res.error)
       return
     }
-    navigate('/perfil')
+    const uid = res.user?.id
+    const role = uid ? await getProfileRole(uid).catch(() => null) : null
+    navigate(role === 'admin' ? '/admin' : '/perfil')
   }
 
   return (

@@ -5,7 +5,7 @@ import { supabase, isSupabaseConfigured } from './supabase'
 interface AuthContextValue {
   user: User | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: string | null }>
+  signIn: (email: string, password: string) => Promise<{ error: string | null; user: User | null }>
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null; needsConfirmation: boolean }>
   signOut: () => Promise<void>
 }
@@ -32,9 +32,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   async function signIn(email: string, password: string) {
-    if (!isSupabaseConfigured()) return { error: 'Supabase no está configurado.' }
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    return { error: error ? 'Credenciales inválidas.' : null }
+    if (!isSupabaseConfigured()) return { error: 'Supabase no está configurado.', user: null }
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) return { error: 'Credenciales inválidas.', user: null }
+    return { error: null, user: data.user }
   }
 
   async function signUp(email: string, password: string, fullName: string) {
