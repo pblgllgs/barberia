@@ -9,6 +9,7 @@ dist-ssr
 .idea
 .DS_Store
 npm-debug.log*
+*.tsbuildinfo
 supabase/.temp
 supabase/.env.local
 # Local Netlify folder
